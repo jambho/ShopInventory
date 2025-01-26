@@ -9,16 +9,12 @@ public class PartModel {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    @Column(name = "part_name")
     private String partName;
 
-    @Column(name = "part_number")
     private String partNumber;
 
-    @Column(name = "part_description")
     private String partDescription;
 
-    @Column(name = "part_price")
     private double partPrice;
 
     public PartModel() {

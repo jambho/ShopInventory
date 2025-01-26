@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -16,18 +15,22 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.store.model.PartModel;
 import com.store.repository.PartRepository;
 
-//@CrossOrigin(origins = "http://localhost:8081")
+@CrossOrigin(origins = "http://localhost:8081")
 @RestController
-//@RequestMapping("/api")
+@RequestMapping("/api")
 public class PartController {
     
-    //@Autowired
-    PartRepository partRepository;
+    private PartRepository partRepository;
+
+    public PartController(PartRepository partRepository) {
+        this.partRepository = partRepository;
+    }
 
     @GetMapping("/")
     public String index() {
@@ -37,7 +40,7 @@ public class PartController {
     @GetMapping("/parts")
     public ResponseEntity<List<PartModel>> getAllParts(@RequestParam(required = false) String partName) {
         try {
-            List<PartModel> parts = new ArrayList<PartModel>();
+            List<PartModel> parts = new ArrayList<>();
 
             if (partName == null)
                 partRepository.findAll().forEach(parts::add);
@@ -66,15 +69,10 @@ public class PartController {
     }
 
     @PostMapping("/parts")
-    public ResponseEntity<PartModel> createPart(@RequestBody PartModel part) {
-        try {
-            PartModel newPart = partRepository
-                    .save(new PartModel(part.getPartName(), part.getPartNumber(), part.getPartDescription(), part.getPartPrice()));
-            return new ResponseEntity<>(newPart, HttpStatus.CREATED);
-        } catch (Exception e) {
-            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
+    @ResponseStatus(HttpStatus.CREATED)
+    public PartModel createPart(@RequestBody PartModel part) {
+        return partRepository.save(new PartModel(part.getPartName(), part.getPartNumber(), part.getPartDescription(), part.getPartPrice()));
+    }  
 
     @PutMapping("/parts/{id}")
     public ResponseEntity<PartModel> updatePart(@PathVariable("id") long id, @RequestBody PartModel part) {
