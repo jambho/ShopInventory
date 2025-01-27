@@ -9,7 +9,8 @@ function App() {
   useEffect(() => {
     const fetchParts = async () => {
       console.log('fetching parts')
-      const response = await fetch('http://localhost:8080/api/parts')
+      const response = await fetch('/api/parts')
+      console.log('response', response)
       const data = await response.json()
       setParts(data)
       setLoading(false)
